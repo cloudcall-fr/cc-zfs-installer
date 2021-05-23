@@ -1552,6 +1552,8 @@ invoke "install_host_zfs_packages"
 invoke "setup_partitions"
 
 (
+  sleep 10
+  create_passphrase_named_pipe
   FILE="/custom-installation/subiquity_ok"
   until [[ -f "$FILE" ]]; do sleep 10;done
 
