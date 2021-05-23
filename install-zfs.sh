@@ -1110,7 +1110,7 @@ Do not continue in this terminal (tap Enter) now!
 You can switch anytime to this terminal, and back, in order to read the instructions.
 '
 
-  whiptail --msgbox "$dialog_message" 30 100
+  # whiptail --msgbox "$dialog_message" 30 100
 
   swapoff -a
 
@@ -1551,33 +1551,39 @@ invoke "ask_dataset_create_options"
 invoke "install_host_zfs_packages"
 invoke "setup_partitions"
 
-if [[ -z ${ZFS_OS_INSTALLATION_SCRIPT:-} ]]; then
-  # Includes the O/S extra configuration, if necessary (network, root pwd, etc.)
-  invoke "install_operating_system"
+(
+  FILE="/custom-installation/subiquity_ok"
+  until [[ -f "$FILE" ]]; do sleep 10;done
 
-  invoke "create_pools_and_datasets"
-  invoke "create_swap_volume"
-  invoke "copy_zpool_cache"
-  invoke "sync_os_temp_installation_dir_to_rpool"
-  invoke "remove_temp_partition_and_expand_rpool"
-else
-  invoke "create_pools_and_datasets"
-  invoke "create_swap_volume"
-  invoke "copy_zpool_cache"
-  invoke "remove_temp_partition_and_expand_rpool"
+  if [[ -z ${ZFS_OS_INSTALLATION_SCRIPT:-} ]]; then
+    # Includes the O/S extra configuration, if necessary (network, root pwd, etc.)
+    invoke "install_operating_system"
 
-  invoke "custom_install_operating_system"
-fi
+    invoke "create_pools_and_datasets"
+    invoke "create_swap_volume"
+    invoke "copy_zpool_cache"
+    invoke "sync_os_temp_installation_dir_to_rpool"
+    invoke "remove_temp_partition_and_expand_rpool"
+  else
+    invoke "create_pools_and_datasets"
+    invoke "create_swap_volume"
+    invoke "copy_zpool_cache"
+    invoke "remove_temp_partition_and_expand_rpool"
 
-invoke "prepare_jail"
-invoke "install_jail_base_packages"
-invoke "install_jail_zfs_packages"
-invoke "prepare_efi_partition"
-invoke "configure_and_update_grub"
-invoke "sync_efi_partitions"
-invoke "update_initramfs"
-invoke "fix_filesystem_mount_ordering"
-invoke "configure_remaining_settings"
+    invoke "custom_install_operating_system"
+  fi
 
-invoke "prepare_for_system_exit"
-invoke "display_exit_banner"
+  invoke "prepare_jail"
+  invoke "install_jail_base_packages"
+  invoke "install_jail_zfs_packages"
+  invoke "prepare_efi_partition"
+  invoke "configure_and_update_grub"
+  invoke "sync_efi_partitions"
+  invoke "update_initramfs"
+  invoke "fix_filesystem_mount_ordering"
+  invoke "configure_remaining_settings"
+
+  invoke "prepare_for_system_exit"
+  invoke "display_exit_banner"
+  touch /custom-installation/install-zfs_ok
+) &
