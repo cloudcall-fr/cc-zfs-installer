@@ -844,18 +844,19 @@ function ask_dataset_create_options {
     v_dataset_create_options=$ZFS_DATASET_CREATE_OPTIONS
   else
     while true; do
-      local tempfile
-      tempfile=$(mktemp)
+      # local tempfile
+      # tempfile=$(mktemp)
 
-      echo "$c_dataset_options_help$c_default_dataset_create_options" > "$tempfile"
+      v_dataset_create_options=$(echo "$c_dataset_options_help$c_default_dataset_create_options" | perl -ne 'print unless /^\s*#/')
+      break
 
-      local user_value
-      user_value=$(dialog --editbox "$tempfile" 30 120 3>&1 1>&2 2>&3)
+      #local user_value
+      #user_value=$(dialog --editbox "$tempfile" 30 120 3>&1 1>&2 2>&3)
 
-      if [[ -n $user_value && $user_value != *\"* ]]; then
-        v_dataset_create_options=$(echo "$user_value" | perl -ne 'print unless /^\s*#/')
-        break
-      fi
+      # if [[ -n $user_value && $user_value != *\"* ]]; then
+      #   v_dataset_create_options=$(echo "$user_value" | perl -ne 'print unless /^\s*#/')
+      #   break
+      # fi
     done
   fi
 
