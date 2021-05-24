@@ -1586,6 +1586,6 @@ invoke "setup_partitions"
   invoke "configure_remaining_settings"
 
   invoke "prepare_for_system_exit"
-  invoke "display_exit_banner"
+  #invoke "display_exit_banner"
   touch /custom-installation/install-zfs_ok
 ) &
