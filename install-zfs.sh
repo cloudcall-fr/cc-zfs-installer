@@ -1242,8 +1242,7 @@ function sync_os_temp_installation_dir_to_rpool {
   # some files vanish while syncing. Debian is well-behaved, and `/run` is empty.
   #
   rsync -avX --exclude=/run --info=progress2 --no-inc-recursive --human-readable "$c_installed_os_mount_dir/" "$c_zfs_mount_dir" |
-    perl -lane 'BEGIN { $/ = "\r"; $|++ } $F[1] =~ /(\d+)%$/ && print $1' |
-    whiptail --gauge "Syncing the installed O/S to the root pool FS..." 30 100 0
+    perl -lane 'BEGIN { $/ = "\r"; $|++ } $F[1] =~ /(\d+)%$/ && print $1'
 
   mkdir "$c_zfs_mount_dir/run"
 
